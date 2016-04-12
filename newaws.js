@@ -3,9 +3,9 @@ var AWS = require('aws-sdk');
 var task =  function(request, callback){
 
 	var params = {
-	  ImageId: '1393245935872', /* required */
-	  MaxCount: 10, /* required */
-	  MinCount: 0, /* required */
+	  ImageId: 'ami-80f715e0', /* required */
+	  MaxCount: 1, /* required */
+	  MinCount: 1, /* required */
 	  Monitoring: {
 		Enabled: false /* required */
 	  },
