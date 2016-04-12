@@ -2,7 +2,7 @@ var lab1_1 = require("./lab/lab1_1").lab
 var example_1 = require("./example_1").lab;
 
 var AWS = require('aws-sdk');
-AWS.config.loadFromPath('/config.json');
+AWS.config.loadFromPath('./config.json');
 var awsinfo = require("./awsinfo").lab;
 
 var PORT = 8080;
@@ -15,10 +15,6 @@ var urlMap = [
 	];
 
 var service = require("./lib/service").http(urlMap);
-
-function(request, callback) {
-
-}
 
 service(PORT);
 
