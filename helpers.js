@@ -11,5 +11,4 @@ var hash = function(algorithm, text){
 	}
 	return digest;
 }
-
 exports.hash = hash;
