@@ -50,5 +50,45 @@ var aws_new = function (request, callback) {
     });
 };
 
+var aws_terminate = function (request, callback) {
+    var paramsDesc = {
+        DryRun: false,
+        MaxResults: 99
+    };
+
+    var paramsTerm = {
+        InstanceIds: [],
+        DryRun: false
+    };
+    var exceptions = [/*instanceids*/];
+
+    ec2.describeInstances(paramsDesc, function (err, data) {
+        if (err) callback(null, err.stack);
+
+        else {
+            data.Reservations.forEach(function (reservation) {
+                reservation.Instances.forEach(function (instance) {
+                    if (exceptions.indexOf(instance) == -1) {
+                        paramsTerm.InstanceIds.push(instance.InstanceId);
+                    }
+                });
+            });
+
+            ec2.terminateInstances(paramsTerm, function (err, data) {
+                if (err) callback(null, err.stack);
+
+                else {
+                    var termStates = [];
+                    data.TerminatingInstances.forEach(function (termInst) {
+                        termStates.push(termInst.CurrentState.Name);
+                    });
+                    callback(null, termStates);
+                }
+            });
+        }
+    });
+};
+
 exports.aws_info = aws_info;
 exports.aws_new = aws_new;
+exports.aws_terminate = aws_terminate;
