@@ -60,7 +60,8 @@ var aws_terminate = function (request, callback) {
         InstanceIds: [],
         DryRun: false
     };
-    var exceptions = [/*instanceids*/];
+
+    var skipInstances = [/*instanceids*/];
 
     ec2.describeInstances(paramsDesc, function (err, data) {
         if (err) callback(null, err.stack);
@@ -68,11 +69,19 @@ var aws_terminate = function (request, callback) {
         else {
             data.Reservations.forEach(function (reservation) {
                 reservation.Instances.forEach(function (instance) {
-                    if (exceptions.indexOf(instance) == -1) {
+                    if (skipInstances.indexOf(instance) === -1
+                        && instance.State.Name !== "shutting-down"
+                        && instance.State.Name !== "terminated") {
+
                         paramsTerm.InstanceIds.push(instance.InstanceId);
                     }
                 });
             });
+
+            if (paramsTerm.InstanceIds.length == 0) {
+                callback(null, []);
+                return;
+            }
 
             ec2.terminateInstances(paramsTerm, function (err, data) {
                 if (err) callback(null, err.stack);
